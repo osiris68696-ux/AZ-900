@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AZ-900 互動考古題</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="kicker">Microsoft Azure Fundamentals</span>
+        <h1>AZ-900 互動考古題</h1>
+      </div>
+      <div class="header-stats">
+        <span id="total-count">474 題</span>
+        <span id="auto-count">自動判分載入中</span>
+        <span id="saved-count">錯題 0</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="setup-panel" class="setup-panel">
+      <div class="setup-intro">
+        <div>
+          <span class="section-kicker">Practice Lab</span>
+          <h2>用互動模式刷 AZ-900 題庫</h2>
+          <p>題目由你提供的 PDF 自動整理，保留正解、參考連結與社群評論。選擇題會自動判分；拖曳、Hotspot 與圖片答案題可先作答再自我核對。</p>
+          <div class="metrics">
+            <div class="metric"><strong id="metric-total">474</strong><span>總題數</span></div>
+            <div class="metric"><strong id="metric-auto">-</strong><span>可自動判分</span></div>
+            <div class="metric"><strong>700</strong><span>通過分數參考</span></div>
+          </div>
+          <div class="mascot-row">
+            <div class="mascot-card pikachu-card">
+              <img src="assets/pikachu-transparent.gif" alt="皮卡丘">
+              <div>
+                <strong>皮卡丘 Pikachu</strong>
+                <span>快速暖身，準備放電作答。</span>
+              </div>
+            </div>
+            <div class="mascot-card gengar-card">
+              <img src="assets/gengar.gif" alt="耿鬼">
+              <div>
+                <strong>耿鬼 Gengar</strong>
+                <span>專門盯住錯題與觀念死角。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="setup-form" class="setup-controls">
+        <h3>開始設定</h3>
+        <label class="field">
+          <span>練習模式</span>
+          <select id="mode">
+            <option value="sequential">依題號順序</option>
+            <option value="random">隨機抽題</option>
+            <option value="wrong">只練錯題</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>題數</span>
+          <input id="question-count" type="number" min="1" max="474" value="50">
+        </label>
+        <label class="toggle">
+          <input id="instant-review" type="checkbox" checked>
+          <span>送出後立即顯示解析</span>
+        </label>
+        <div class="start-actions">
+          <button class="primary locked-start" type="submit"><span aria-hidden="true">🔒</span> 點擊解鎖（隨機派題）</button>
+          <button type="button" id="browse-all">瀏覽全部題目</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="exam-panel" class="exam-panel hidden">
+      <div class="exam-layout">
+        <div class="question-area">
+          <div class="toolbar">
+            <div>
+              <span class="status-pill" id="progress-label">第 1 / 1 題</span>
+              <span class="status-pill" id="score-label">答對 0</span>
+            </div>
+            <div class="toolbar-actions">
+              <button type="button" id="back-setup">回設定</button>
+              <button type="button" id="finish-exam" class="primary">交卷</button>
+            </div>
+          </div>
+          <div class="progress-track"><div id="progress-fill"></div></div>
+          <article id="question-card" class="question-card"></article>
+          <div class="nav-actions">
+            <button type="button" id="prev-question">上一題</button>
+            <button type="button" id="mark-question">標記</button>
+            <button type="button" id="submit-answer" class="primary">送出答案</button>
+            <button type="button" id="show-answer">顯示解析</button>
+            <button type="button" id="next-question">下一題</button>
+          </div>
+        </div>
+        <aside class="side-panel">
+          <div class="side-title">題號導覽</div>
+          <div id="nav-grid" class="nav-grid"></div>
+          <div class="legend">綠色為已答，紅色為錯題，黃色為已標記。</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="results-panel" class="results-panel hidden">
+      <div class="score-report">
+        <div>
+          <span class="section-kicker">Score Report</span>
+          <h2 id="result-title">作答結果</h2>
+          <p id="result-note"></p>
+        </div>
+        <div class="score-number" id="score-number">0</div>
+      </div>
+      <div class="actions-row">
+        <button type="button" id="review-wrong" class="primary">複習錯題</button>
+        <button type="button" id="restart">重新開始</button>
+      </div>
+      <div id="wrong-list" class="wrong-list"></div>
+    </section>
+  </main>
+
+  <div id="password-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="password-title">
+    <div class="password-modal">
+      <button type="button" id="close-password" class="modal-close" aria-label="關閉">×</button>
+      <div class="modal-visual">
+        <div class="lock-badge" aria-hidden="true"></div>
+        <img src="assets/pikachu-transparent.gif" alt="" aria-hidden="true">
+      </div>
+      <h2 id="password-title">系統存取驗證</h2>
+      <p>請輸入 9 碼密碼解鎖考場</p>
+      <input id="exam-password" class="password-input" type="password" inputmode="text" autocomplete="off" maxlength="9" aria-label="測驗密碼">
+      <div class="pin-dots" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div id="password-error" class="password-error" role="alert"></div>
+      <div class="modal-actions">
+        <button type="button" id="cancel-password">取消</button>
+        <button type="button" id="unlock-exam" class="primary">解鎖進入</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data/questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
