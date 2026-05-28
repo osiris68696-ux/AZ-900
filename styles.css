@@ -185,6 +185,7 @@ h1 { margin: 0; font-size: 1.35rem; letter-spacing: 0; }
 .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
 .toolbar > div, .toolbar-actions, .nav-actions, .actions-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .status-pill { background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 7px 11px; font-weight: 700; }
+#timer-label { color: var(--blue-dark); background: #fffef6; border-color: #b8c6ff; }
 .progress-track { height: 8px; background: #e7edf5; border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
 #progress-fill { height: 100%; width: 0; background: var(--blue); transition: width .2s ease; }
 .question-card {
@@ -284,6 +285,24 @@ h1 { margin: 0; font-size: 1.35rem; letter-spacing: 0; }
 .actions-row { margin: 16px 0; }
 .wrong-list { display: grid; gap: 14px; }
 .wrong-list .question-card { margin-bottom: 0; }
+.floating-timer {
+  position: fixed;
+  top: 104px;
+  right: 24px;
+  z-index: 30;
+  background: #fff;
+  border: 1px solid #d7deea;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: var(--blue-dark);
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(20, 36, 64, .16);
+}
+.floating-timer.warning {
+  color: var(--bad);
+  border-color: #fecaca;
+  background: #fff5f5;
+}
 
 .modal-backdrop {
   position: fixed;
@@ -420,4 +439,5 @@ h1 { margin: 0; font-size: 1.35rem; letter-spacing: 0; }
   .score-number { font-size: 3rem; }
   .password-modal { padding: 24px 18px 28px; }
   .pin-dots { gap: 10px; }
+  .floating-timer { top: 164px; right: 14px; }
 }

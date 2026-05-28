@@ -64,7 +64,18 @@
         </label>
         <label class="field">
           <span>題數</span>
-          <input id="question-count" type="number" min="1" max="474" value="50">
+          <select id="question-count">
+            <option value="45" selected>45 題</option>
+            <option value="50">50 題</option>
+            <option value="100">100 題</option>
+            <option value="474">全部題庫</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>時間</span>
+          <select id="exam-duration">
+            <option value="60" selected>60 分鐘</option>
+          </select>
         </label>
         <label class="toggle">
           <input id="instant-review" type="checkbox" checked>
@@ -72,7 +83,6 @@
         </label>
         <div class="start-actions">
           <button class="primary locked-start" type="submit"><span aria-hidden="true">🔒</span> 點擊解鎖（隨機派題）</button>
-          <button type="button" id="browse-all">瀏覽全部題目</button>
         </div>
       </form>
     </section>
@@ -84,9 +94,10 @@
             <div>
               <span class="status-pill" id="progress-label">第 1 / 1 題</span>
               <span class="status-pill" id="score-label">答對 0</span>
+              <span class="status-pill" id="timer-label">剩餘 60:00</span>
             </div>
             <div class="toolbar-actions">
-              <button type="button" id="back-setup">回設定</button>
+              <button type="button" id="mark-question">標記複查</button>
               <button type="button" id="finish-exam" class="primary">交卷</button>
             </div>
           </div>
@@ -94,7 +105,6 @@
           <article id="question-card" class="question-card"></article>
           <div class="nav-actions">
             <button type="button" id="prev-question">上一題</button>
-            <button type="button" id="mark-question">標記</button>
             <button type="button" id="submit-answer" class="primary">送出答案</button>
             <button type="button" id="show-answer">顯示解析</button>
             <button type="button" id="next-question">下一題</button>
@@ -124,6 +134,8 @@
       <div id="wrong-list" class="wrong-list"></div>
     </section>
   </main>
+
+  <div id="floating-timer" class="floating-timer hidden">60:00</div>
 
   <div id="password-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="password-title">
     <div class="password-modal">

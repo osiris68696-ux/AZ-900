@@ -9,7 +9,10 @@ const state = {
   submitted: {},
   flagged: {},
   instantReview: true,
-  reviewMode: false
+  reviewMode: false,
+  durationSeconds: 3600,
+  remainingSeconds: 3600,
+  timerId: null
 };
 
 const els = {
@@ -19,11 +22,14 @@ const els = {
   form: document.querySelector("#setup-form"),
   mode: document.querySelector("#mode"),
   count: document.querySelector("#question-count"),
+  duration: document.querySelector("#exam-duration"),
   instant: document.querySelector("#instant-review"),
   card: document.querySelector("#question-card"),
   nav: document.querySelector("#nav-grid"),
   progressLabel: document.querySelector("#progress-label"),
   scoreLabel: document.querySelector("#score-label"),
+  timerLabel: document.querySelector("#timer-label"),
+  floatingTimer: document.querySelector("#floating-timer"),
   progressFill: document.querySelector("#progress-fill"),
   prev: document.querySelector("#prev-question"),
   next: document.querySelector("#next-question"),
@@ -31,8 +37,6 @@ const els = {
   showAnswer: document.querySelector("#show-answer"),
   mark: document.querySelector("#mark-question"),
   finish: document.querySelector("#finish-exam"),
-  backSetup: document.querySelector("#back-setup"),
-  browseAll: document.querySelector("#browse-all"),
   resultTitle: document.querySelector("#result-title"),
   resultNote: document.querySelector("#result-note"),
   scoreNumber: document.querySelector("#score-number"),
@@ -84,7 +88,6 @@ function updateHeader() {
   document.querySelector("#saved-count").textContent = `錯題 ${wrong.length}`;
   document.querySelector("#metric-total").textContent = questions.length;
   document.querySelector("#metric-auto").textContent = auto;
-  els.count.max = questions.length;
 }
 
 function shuffle(list) {
@@ -96,7 +99,7 @@ function shuffle(list) {
   return arr;
 }
 
-function startExam(mode, limit, reviewMode = false) {
+function startExam(mode, limit, reviewMode = false, durationMinutes = 60) {
   const wrongSet = new Set(saved().wrong || []);
   let pool = questions;
   if (mode === "wrong") pool = questions.filter(q => wrongSet.has(q.id));
@@ -111,14 +114,53 @@ function startExam(mode, limit, reviewMode = false) {
     submitted: {},
     flagged: {},
     instantReview: els.instant.checked,
-    reviewMode
+    reviewMode,
+    durationSeconds: durationMinutes * 60,
+    remainingSeconds: durationMinutes * 60
   });
 
   els.setup.classList.add("hidden");
   els.results.classList.add("hidden");
   els.exam.classList.remove("hidden");
+  els.floatingTimer.classList.remove("hidden");
+  startTimer();
   renderNav();
   renderQuestion();
+}
+
+function stopTimer() {
+  if (state.timerId) {
+    clearInterval(state.timerId);
+    state.timerId = null;
+  }
+}
+
+function startTimer() {
+  stopTimer();
+  updateTimerDisplay();
+  state.timerId = setInterval(() => {
+    state.remainingSeconds = Math.max(0, state.remainingSeconds - 1);
+    updateTimerDisplay();
+    if (state.remainingSeconds === 0) {
+      stopTimer();
+      finishExam();
+    }
+  }, 1000);
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes}:${String(secs).padStart(2, "0")}`;
+}
+
+function updateTimerDisplay() {
+  const value = formatTime(state.remainingSeconds);
+  els.timerLabel.textContent = `剩餘 ${value}`;
+  els.floatingTimer.textContent = value;
+  const warning = state.remainingSeconds <= 300;
+  els.timerLabel.classList.toggle("warning", warning);
+  els.floatingTimer.classList.toggle("warning", warning);
 }
 
 function openPasswordModal(callback) {
@@ -258,7 +300,7 @@ function renderQuestion() {
   els.prev.disabled = state.index === 0;
   els.next.disabled = state.index === state.pool.length - 1;
   els.submit.disabled = submitted || (!selected.size && q.options.length > 0);
-  els.mark.textContent = state.flagged[q.id] ? "取消標記" : "標記";
+  els.mark.textContent = state.flagged[q.id] ? "取消標記" : "標記複查";
   renderNav();
 }
 
@@ -285,6 +327,8 @@ function correctCount() {
 }
 
 function finishExam() {
+  stopTimer();
+  els.floatingTimer.classList.add("hidden");
   persistWrong();
   const submitted = state.pool.filter(q => state.submitted[q.id]).length;
   const autoGradable = state.pool.filter(q => q.answer.length).length;
@@ -294,7 +338,8 @@ function finishExam() {
   els.exam.classList.add("hidden");
   els.results.classList.remove("hidden");
   els.resultTitle.textContent = score >= 700 ? "通過練習門檻" : "需要再複習";
-  els.resultNote.textContent = `已作答 ${submitted} / ${state.pool.length} 題；自動判分題 ${autoGradable} 題，答對 ${correct} 題。Hotspot/Drag Drop 不列入分數。`;
+  const used = formatTime(state.durationSeconds - state.remainingSeconds);
+  els.resultNote.textContent = `已作答 ${submitted} / ${state.pool.length} 題；自動判分題 ${autoGradable} 題，答對 ${correct} 題。作答時間 ${used}。Hotspot/Drag Drop 不列入分數。`;
   els.scoreNumber.textContent = score;
   els.scoreNumber.classList.toggle("fail", score < 700);
   renderWrongList();
@@ -317,13 +362,11 @@ function renderWrongList() {
 
 els.form.addEventListener("submit", event => {
   event.preventDefault();
-  openPasswordModal(() => startExam(els.mode.value === "sequential" ? "random" : els.mode.value, Number(els.count.value), false));
+  openPasswordModal(() => startExam(els.mode.value === "sequential" ? "random" : els.mode.value, Number(els.count.value), false, Number(els.duration.value)));
 });
 
-els.browseAll.addEventListener("click", () => startExam("sequential", questions.length, true));
 els.prev.addEventListener("click", () => { state.index -= 1; renderQuestion(); });
 els.next.addEventListener("click", () => { state.index += 1; renderQuestion(); });
-els.backSetup.addEventListener("click", () => { els.exam.classList.add("hidden"); els.setup.classList.remove("hidden"); });
 els.finish.addEventListener("click", finishExam);
 els.showAnswer.addEventListener("click", () => document.querySelector("#answer-panel").classList.toggle("show"));
 els.mark.addEventListener("click", () => {
@@ -340,8 +383,11 @@ els.reviewWrong.addEventListener("click", () => {
   const wrong = state.pool.filter(q => state.submitted[q.id] && !isCorrect(q));
   if (wrong.length) {
     Object.assign(state, { pool: wrong, index: 0, answers: {}, submitted: {}, flagged: {} });
+    state.remainingSeconds = state.durationSeconds;
     els.results.classList.add("hidden");
     els.exam.classList.remove("hidden");
+    els.floatingTimer.classList.remove("hidden");
+    startTimer();
     renderQuestion();
   }
 });
