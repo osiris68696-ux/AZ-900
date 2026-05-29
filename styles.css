@@ -313,7 +313,7 @@ h1 { margin: 0; font-size: 1.35rem; letter-spacing: 0; }
   padding: 18px;
   background: rgba(15, 23, 42, .42);
 }
-.password-modal {
+.access-modal {
   position: relative;
   width: min(380px, 100%);
   background: #fff;
@@ -361,17 +361,17 @@ h1 { margin: 0; font-size: 1.35rem; letter-spacing: 0; }
   object-fit: contain;
   image-rendering: pixelated;
 }
-.password-modal h2 {
+.access-modal h2 {
   margin: 12px 0 4px;
   color: #1f2937;
   font-size: 1.5rem;
 }
-.password-modal p {
+.access-modal p {
   margin: 0 0 18px;
   color: #667085;
   font-weight: 700;
 }
-.password-input {
+.access-input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
@@ -393,7 +393,7 @@ h1 { margin: 0; font-size: 1.35rem; letter-spacing: 0; }
   justify-self: center;
 }
 .pin-dots span.filled { background: #5b4bff; }
-.password-error {
+.access-error {
   min-height: 22px;
   color: var(--bad);
   font-weight: 800;
@@ -437,7 +437,7 @@ h1 { margin: 0; font-size: 1.35rem; letter-spacing: 0; }
   .mascot-card { grid-template-columns: 92px minmax(0, 1fr); }
   .mascot-card img { width: 92px; height: 76px; }
   .score-number { font-size: 3rem; }
-  .password-modal { padding: 24px 18px 28px; }
+  .access-modal { padding: 24px 18px 28px; }
   .pin-dots { gap: 10px; }
   .floating-timer { top: 164px; right: 14px; }
 }

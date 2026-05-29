@@ -137,22 +137,22 @@
 
   <div id="floating-timer" class="floating-timer hidden">60:00</div>
 
-  <div id="password-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="password-title">
-    <div class="password-modal">
-      <button type="button" id="close-password" class="modal-close" aria-label="關閉">×</button>
+  <div id="access-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="access-title">
+    <div class="access-modal">
+      <button type="button" id="close-access" class="modal-close" aria-label="關閉">×</button>
       <div class="modal-visual">
         <div class="lock-badge" aria-hidden="true"></div>
         <img src="assets/pikachu-transparent.gif" alt="" aria-hidden="true">
       </div>
-      <h2 id="password-title">系統存取驗證</h2>
-      <p>請輸入 9 碼密碼解鎖考場</p>
-      <input id="exam-password" class="password-input" type="password" inputmode="text" autocomplete="off" maxlength="9" aria-label="測驗密碼">
+      <h2 id="access-title">考場通行碼</h2>
+      <p>請輸入 9 碼通行碼開始測驗</p>
+      <input id="exam-access-code" class="access-input" type="text" inputmode="text" autocomplete="off" maxlength="9" aria-label="考場通行碼">
       <div class="pin-dots" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
-      <div id="password-error" class="password-error" role="alert"></div>
+      <div id="access-error" class="access-error" role="alert"></div>
       <div class="modal-actions">
-        <button type="button" id="cancel-password">取消</button>
+        <button type="button" id="cancel-access">取消</button>
         <button type="button" id="unlock-exam" class="primary">解鎖進入</button>
       </div>
     </div>

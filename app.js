@@ -1,6 +1,6 @@
 const questions = window.AZ900_QUESTIONS || [];
 const storeKey = "az900-practice-state-v1";
-const examPassword = "01156688@";
+const examAccessCode = "01156688@";
 
 const state = {
   pool: [],
@@ -45,14 +45,14 @@ const els = {
   restart: document.querySelector("#restart")
 };
 
-const passwordEls = {
-  modal: document.querySelector("#password-modal"),
-  input: document.querySelector("#exam-password"),
+const accessEls = {
+  modal: document.querySelector("#access-modal"),
+  input: document.querySelector("#exam-access-code"),
   dots: [...document.querySelectorAll(".pin-dots span")],
-  error: document.querySelector("#password-error"),
+  error: document.querySelector("#access-error"),
   unlock: document.querySelector("#unlock-exam"),
-  cancel: document.querySelector("#cancel-password"),
-  close: document.querySelector("#close-password")
+  cancel: document.querySelector("#cancel-access"),
+  close: document.querySelector("#close-access")
 };
 
 let pendingStart = null;
@@ -163,35 +163,35 @@ function updateTimerDisplay() {
   els.floatingTimer.classList.toggle("warning", warning);
 }
 
-function openPasswordModal(callback) {
+function openAccessModal(callback) {
   pendingStart = callback;
-  passwordEls.input.value = "";
-  passwordEls.error.textContent = "";
+  accessEls.input.value = "";
+  accessEls.error.textContent = "";
   updatePinDots();
-  passwordEls.modal.classList.remove("hidden");
-  setTimeout(() => passwordEls.input.focus(), 0);
+  accessEls.modal.classList.remove("hidden");
+  setTimeout(() => accessEls.input.focus(), 0);
 }
 
-function closePasswordModal() {
-  passwordEls.modal.classList.add("hidden");
+function closeAccessModal() {
+  accessEls.modal.classList.add("hidden");
   pendingStart = null;
 }
 
 function updatePinDots() {
-  const length = passwordEls.input.value.length;
-  passwordEls.dots.forEach((dot, index) => dot.classList.toggle("filled", index < length));
+  const length = accessEls.input.value.length;
+  accessEls.dots.forEach((dot, index) => dot.classList.toggle("filled", index < length));
 }
 
 function unlockExam() {
-  if (passwordEls.input.value !== examPassword) {
-    passwordEls.error.textContent = "密碼錯誤，請重新輸入。";
-    passwordEls.input.value = "";
+  if (accessEls.input.value !== examAccessCode) {
+    accessEls.error.textContent = "通行碼錯誤，請重新輸入。";
+    accessEls.input.value = "";
     updatePinDots();
-    passwordEls.input.focus();
+    accessEls.input.focus();
     return;
   }
   const callback = pendingStart;
-  closePasswordModal();
+  closeAccessModal();
   if (callback) callback();
 }
 
@@ -362,7 +362,7 @@ function renderWrongList() {
 
 els.form.addEventListener("submit", event => {
   event.preventDefault();
-  openPasswordModal(() => startExam(els.mode.value === "sequential" ? "random" : els.mode.value, Number(els.count.value), false, Number(els.duration.value)));
+  openAccessModal(() => startExam(els.mode.value === "sequential" ? "random" : els.mode.value, Number(els.count.value), false, Number(els.duration.value)));
 });
 
 els.prev.addEventListener("click", () => { state.index -= 1; renderQuestion(); });
@@ -396,17 +396,17 @@ els.restart.addEventListener("click", () => {
   els.setup.classList.remove("hidden");
 });
 
-passwordEls.input.addEventListener("input", updatePinDots);
-passwordEls.input.addEventListener("keydown", event => {
+accessEls.input.addEventListener("input", updatePinDots);
+accessEls.input.addEventListener("keydown", event => {
   if (event.key === "Enter") unlockExam();
-  if (event.key === "Escape") closePasswordModal();
+  if (event.key === "Escape") closeAccessModal();
 });
-passwordEls.unlock.addEventListener("click", unlockExam);
-passwordEls.cancel.addEventListener("click", closePasswordModal);
-passwordEls.close.addEventListener("click", closePasswordModal);
-passwordEls.modal.addEventListener("click", event => {
-  if (event.target === passwordEls.modal) closePasswordModal();
-  else if (!event.target.closest("button")) passwordEls.input.focus();
+accessEls.unlock.addEventListener("click", unlockExam);
+accessEls.cancel.addEventListener("click", closeAccessModal);
+accessEls.close.addEventListener("click", closeAccessModal);
+accessEls.modal.addEventListener("click", event => {
+  if (event.target === accessEls.modal) closeAccessModal();
+  else if (!event.target.closest("button")) accessEls.input.focus();
 });
 
 updateHeader();
