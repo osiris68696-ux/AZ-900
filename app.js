@@ -1,6 +1,5 @@
 const questions = window.AZ900_QUESTIONS || [];
 const storeKey = "az900-practice-state-v1";
-const examAccessCode = "01156688@";
 
 const state = {
   pool: [],
@@ -45,17 +44,6 @@ const els = {
   restart: document.querySelector("#restart")
 };
 
-const accessEls = {
-  modal: document.querySelector("#access-modal"),
-  input: document.querySelector("#exam-access-code"),
-  dots: [...document.querySelectorAll(".pin-dots span")],
-  error: document.querySelector("#access-error"),
-  unlock: document.querySelector("#unlock-exam"),
-  cancel: document.querySelector("#cancel-access"),
-  close: document.querySelector("#close-access")
-};
-
-let pendingStart = null;
 
 function saved() {
   try {
@@ -161,38 +149,6 @@ function updateTimerDisplay() {
   const warning = state.remainingSeconds <= 300;
   els.timerLabel.classList.toggle("warning", warning);
   els.floatingTimer.classList.toggle("warning", warning);
-}
-
-function openAccessModal(callback) {
-  pendingStart = callback;
-  accessEls.input.value = "";
-  accessEls.error.textContent = "";
-  updatePinDots();
-  accessEls.modal.classList.remove("hidden");
-  setTimeout(() => accessEls.input.focus(), 0);
-}
-
-function closeAccessModal() {
-  accessEls.modal.classList.add("hidden");
-  pendingStart = null;
-}
-
-function updatePinDots() {
-  const length = accessEls.input.value.length;
-  accessEls.dots.forEach((dot, index) => dot.classList.toggle("filled", index < length));
-}
-
-function unlockExam() {
-  if (accessEls.input.value !== examAccessCode) {
-    accessEls.error.textContent = "通行碼錯誤，請重新輸入。";
-    accessEls.input.value = "";
-    updatePinDots();
-    accessEls.input.focus();
-    return;
-  }
-  const callback = pendingStart;
-  closeAccessModal();
-  if (callback) callback();
 }
 
 function currentQuestion() {
@@ -362,7 +318,7 @@ function renderWrongList() {
 
 els.form.addEventListener("submit", event => {
   event.preventDefault();
-  openAccessModal(() => startExam(els.mode.value === "sequential" ? "random" : els.mode.value, Number(els.count.value), false, Number(els.duration.value)));
+  startExam(els.mode.value === "sequential" ? "random" : els.mode.value, Number(els.count.value), false, Number(els.duration.value));
 });
 
 els.prev.addEventListener("click", () => { state.index -= 1; renderQuestion(); });
@@ -394,19 +350,6 @@ els.reviewWrong.addEventListener("click", () => {
 els.restart.addEventListener("click", () => {
   els.results.classList.add("hidden");
   els.setup.classList.remove("hidden");
-});
-
-accessEls.input.addEventListener("input", updatePinDots);
-accessEls.input.addEventListener("keydown", event => {
-  if (event.key === "Enter") unlockExam();
-  if (event.key === "Escape") closeAccessModal();
-});
-accessEls.unlock.addEventListener("click", unlockExam);
-accessEls.cancel.addEventListener("click", closeAccessModal);
-accessEls.close.addEventListener("click", closeAccessModal);
-accessEls.modal.addEventListener("click", event => {
-  if (event.target === accessEls.modal) closeAccessModal();
-  else if (!event.target.closest("button")) accessEls.input.focus();
 });
 
 updateHeader();

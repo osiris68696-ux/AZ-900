@@ -82,7 +82,7 @@
           <span>送出後立即顯示解析</span>
         </label>
         <div class="start-actions">
-          <button class="primary locked-start" type="submit"><span aria-hidden="true">🔒</span> 點擊解鎖（隨機派題）</button>
+          <button class="primary" type="submit">開始作答</button>
         </div>
       </form>
     </section>
@@ -136,27 +136,6 @@
   </main>
 
   <div id="floating-timer" class="floating-timer hidden">60:00</div>
-
-  <div id="access-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="access-title">
-    <div class="access-modal">
-      <button type="button" id="close-access" class="modal-close" aria-label="關閉">×</button>
-      <div class="modal-visual">
-        <div class="lock-badge" aria-hidden="true"></div>
-        <img src="assets/pikachu-transparent.gif" alt="" aria-hidden="true">
-      </div>
-      <h2 id="access-title">考場通行碼</h2>
-      <p>請輸入 9 碼通行碼開始測驗</p>
-      <input id="exam-access-code" class="access-input" type="text" inputmode="text" autocomplete="off" maxlength="9" aria-label="考場通行碼">
-      <div class="pin-dots" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <div id="access-error" class="access-error" role="alert"></div>
-      <div class="modal-actions">
-        <button type="button" id="cancel-access">取消</button>
-        <button type="button" id="unlock-exam" class="primary">解鎖進入</button>
-      </div>
-    </div>
-  </div>
 
   <script src="data/questions.js"></script>
   <script src="app.js"></script>
